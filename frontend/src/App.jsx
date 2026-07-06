@@ -5,7 +5,7 @@ import LoadingSpinner from './components/LoadingSpinner'
 import ImageUpload from './components/ImageUpload'
 import PDFUploader from './components/PDFUploader'
 import LandingPage from './components/LandingPage'
-import { checkText } from './services/api'
+import { checkText, checkPDF } from './services/api'
 import './App.css'
 
 function App() {
@@ -54,23 +54,13 @@ function App() {
     setPdfError(null)
     setPdfResults(null)
 
-    const formData = new FormData()
-    formData.append('file', file)
-
     try {
-      const response = await fetch('http://localhost:8000/api/check-pdf', {
-        method: 'POST',
-        body: formData,
-      })
-
-      if (!response.ok) {
-        throw new Error('Upload failed')
-      }
-
-      const data = await response.json()
-      setPdfResults(data.results)
+      // Using the API service instead of hardcoded localhost
+      const response = await checkPDF(file)
+      setPdfResults(response.results)
     } catch (err) {
       setPdfError('Failed to process PDF. Please try again.')
+      console.error(err)
     } finally {
       setPdfLoading(false)
     }
