@@ -35,19 +35,41 @@ function ResultsPanel({ results }) {
     return String(value)
   }
 
+  // ========== EMAIL-FRIENDLY COPY MESSAGES ==========
+  
+  // Grammar: "Could you please change "Dear Mr. Smith" to "Dear Mr. Smith,"?"
   const getGrammarCopyMessage = (issue) => {
     const original = safeString(issue.original, '')
     const correction = safeString(issue.correction, '')
     if (original && correction) {
-      return `Suggestion: Change "${original}" to "${correction}"`
+      return `Could you please change "${original}" to "${correction}"?`
     }
-    return `Suggestion: ${safeString(issue.message, 'Grammar issue')}`
+    return `Please review: ${safeString(issue.message, 'Grammar issue')}`
   }
 
+  // Spelling: "Could you please change "grey" to "gray" for British English consistency?"
   const getSpellingCopyMessage = (issue) => {
     const original = safeString(issue.original, '')
     const correction = safeString(issue.correction, '')
-    return `Suggestion: Change "${original}" to "${correction}" for British English consistency.`
+    return `Could you please change "${original}" to "${correction}" for British English consistency?`
+  }
+
+  // Logic: "Please review this sentence: "The dead man is breathing". A dead person cannot breathe. Suggested fix: Change to "The injured man is breathing"."
+  const getLogicCopyMessage = (issue, suggestion) => {
+    const sentence = safeString(issue.sentence, '')
+    const reason = safeString(issue.reason, '')
+    if (sentence && reason) {
+      return `Please review this sentence: "${sentence}". ${reason}. Suggested fix: ${suggestion || 'Rewrite for logical consistency'}.`
+    }
+    return `Please review: ${reason || 'Logical inconsistency found'}`
+  }
+
+  // Coherence: "Please improve flow between these sentences: "I love pizza." and "Quantum physics is complex." Consider adding a transition word like 'However' or 'Therefore'."
+  const getCoherenceCopyMessage = (warning, sentence1, sentence2) => {
+    if (sentence1 && sentence2) {
+      return `Please improve flow between these sentences: "${sentence1}" and "${sentence2}". Consider adding a transition word like 'However' or 'Therefore'.`
+    }
+    return `Please review coherence: ${warning}`
   }
 
   const getSpecificLogicSuggestion = (sentence, reason) => {
@@ -97,14 +119,6 @@ function ResultsPanel({ results }) {
       original: sentence,
       suggestions: [`Rewrite "${sentence}" for logical consistency. ${reason}`]
     }
-  }
-
-  const getLogicCopyMessage = (issue) => {
-    const sentence = safeString(issue.sentence, safeString(issue.original, ''))
-    const reason = safeString(issue.reason, '')
-    const suggestion = getSpecificLogicSuggestion(sentence, reason)
-    const suggestionsText = suggestion.suggestions.map(s => `"${s}"`).join(', or ')
-    return `Suggestion: ${suggestionsText}`
   }
 
   const getSentencesFromText = (text) => {
@@ -382,9 +396,9 @@ function ResultsPanel({ results }) {
                   <div className="logic-sentence">"{sentence}"</div>
                   <div className="logic-reason">{reason}</div>
                   <div className="logic-suggestions">
-                    <div className="suggestions-label">Alternatives:</div>
+                    <div className="suggestions-label">Suggested fixes:</div>
                     {specificSuggestion.suggestions.map((suggestion, sugIdx) => {
-                      const copyMessage = suggestion
+                      const copyMessage = getLogicCopyMessage(issue, suggestion)
                       const uniqueKey = `logic_${issueIdx}_${sugIdx}`
                       return (
                         <div key={sugIdx} className="logic-option">
@@ -394,7 +408,7 @@ function ResultsPanel({ results }) {
                             className="copy-btn-mini" 
                             onClick={() => copyToClipboard(copyMessage, uniqueKey)}
                           >
-                            {copiedStates[uniqueKey] ? '✓' : 'Copy'}
+                            {copiedStates[uniqueKey] ? '✓' : 'Copy Suggestion'}
                           </button>
                         </div>
                       )
@@ -434,18 +448,23 @@ function ResultsPanel({ results }) {
             {parsedWarnings.length > 0 && (
               <div className="coherence-warnings">
                 <div className="warnings-label">Flow issues detected:</div>
-                {parsedWarnings.map((warning, idx) => (
-                  <div key={idx} className="warning-item">
-                    <div className="warning-text">• {warning.text}</div>
-                    {warning.sentence1Text && warning.sentence2Text && (
-                      <div className="warning-suggestion">
-                        <div className="ws-sentence">"{warning.sentence1Text}"</div>
-                        <div className="ws-sentence">"{warning.sentence2Text}"</div>
-                        <div className="ws-fix">Try: "{warning.sentence1Text} However, {warning.sentence2Text.charAt(0).toLowerCase() + warning.sentence2Text.slice(1)}"</div>
-                      </div>
-                    )}
-                  </div>
-                ))}
+                {parsedWarnings.map((warning, idx) => {
+                  const copyMessage = getCoherenceCopyMessage(warning.text, warning.sentence1Text, warning.sentence2Text)
+                  return (
+                    <div key={idx} className="warning-item">
+                      <div className="warning-text">• {warning.text}</div>
+                      {warning.sentence1Text && warning.sentence2Text && (
+                        <div className="warning-suggestion">
+                          <div className="ws-sentence">"{warning.sentence1Text}"</div>
+                          <div className="ws-sentence">"{warning.sentence2Text}"</div>
+                          <button className="copy-btn-small" onClick={() => copyToClipboard(copyMessage, `coherence_${idx}`)}>
+                            {copiedStates[`coherence_${idx}`] ? '✓' : 'Copy'}
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  )
+                })}
               </div>
             )}
           </div>
