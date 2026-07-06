@@ -16,9 +16,16 @@ from checkers.pdf_checker import PDFChecker
 
 main = FastAPI(title="British English Checker API", version="1.0.0")
 
+# ========== UPDATED CORS WITH YOUR VERCEL URL ==========
 main.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173", "http://localhost:3000", "https://*.onrender.com"],
+    allow_origins=[
+        "http://localhost:5173",
+        "http://localhost:3000",
+        "https://*.onrender.com",
+        "https://quality-check-automation.vercel.app",  # Your Vercel URL
+        "https://*.vercel.app"
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -146,7 +153,7 @@ async def check_image_alignment(logo: UploadFile = File(...), background: Upload
     except Exception as e:
         return {"error": str(e), "overlap_percent": 0}
 
-# ========== NEW: PDF QC ENDPOINT ==========
+# ========== PDF QC ENDPOINT ==========
 @main.post("/api/check-pdf")
 async def check_pdf(file: UploadFile = File(...)):
     """Check PDF document with page numbers and TOC validation"""
