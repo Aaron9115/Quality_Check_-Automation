@@ -16,14 +16,14 @@ from checkers.pdf_checker import PDFChecker
 
 main = FastAPI(title="British English Checker API", version="1.0.0")
 
-# ========== UPDATED CORS WITH YOUR VERCEL URL ==========
+# ========== CORS WITH YOUR VERCEL URL ==========
 main.add_middleware(
     CORSMiddleware,
     allow_origins=[
         "http://localhost:5173",
         "http://localhost:3000",
         "https://*.onrender.com",
-        "https://quality-check-automation.vercel.app",  # Your Vercel URL
+        "https://quality-check-automation.vercel.app",
         "https://*.vercel.app"
     ],
     allow_credentials=True,
@@ -85,42 +85,14 @@ async def check_text(request: TextCheckRequest):
             "score": result.get("coherence_score", 0.5),
             "warnings": result.get("coherence_warnings", [])
         }
-        print(f"Groq found {len(grammar_issues)} grammar issues")
+        print(f"Groq found {len(grammar_issues)} grammar issues, {len(logic_issues)} logic issues")
     else:
         print("Groq not available - check your API key")
     
-    # ========== IMPROVED FILTERING ==========
-    # Only show grammar issues that are NOT already fixed in the corrected text
-    filtered_grammar_issues = []
-    
-    for issue in grammar_issues:
-        original = issue.get("original", "")
-        correction = issue.get("correction", "")
-        
-        # Skip if no original or correction
-        if not original or not correction:
-            filtered_grammar_issues.append(issue)
-            continue
-        
-        # Check if the original error still exists in the corrected text
-        # AND the correction is NOT already present
-        original_exists = original in final_corrected
-        correction_exists = correction in final_corrected
-        
-        # If the correction is already in the final text, don't show this issue
-        if correction_exists:
-            print(f"Skipping issue - already fixed: '{original}' → '{correction}'")
-            continue
-        
-        # If the original still exists AND correction doesn't exist, show the issue
-        if original_exists and not correction_exists:
-            filtered_grammar_issues.append(issue)
-        # If the original doesn't exist, the text is already correct
-        elif not original_exists:
-            print(f"Skipping issue - original not found: '{original}'")
-            continue
-        else:
-            filtered_grammar_issues.append(issue)
+    # ========== SHOW ALL GRAMMAR ISSUES (NO FILTERING) ==========
+    # Show ALL grammar issues from Groq (don't filter out fixed ones)
+    filtered_grammar_issues = grammar_issues
+    print(f"Showing all {len(filtered_grammar_issues)} grammar issues")
     
     # Format spelling issues
     spelling_issues_formatted = []
@@ -131,8 +103,6 @@ async def check_text(request: TextCheckRequest):
             "correction": issue['suggestion'],
             "context": issue['context']
         })
-    
-    print(f"Final: {len(filtered_grammar_issues)} grammar issues shown (filtered from {len(grammar_issues)})")
     
     return {
         "original_text": text,
