@@ -1,0 +1,20 @@
+{
+  "-or to -our": {
+    "color": "colour",
+    "favor": "favour",
+    "honor": "honour",
+    "neighbor": "neighbour",
+    "behavior": "behaviour"
+  },
+  "-ize to -ise": {
+    "organize": "organise",
+    "realize": "realise",
+    "recognize": "recognise",
+    "analyze": "analyse"
+  },
+  "double L": {
+    "panelist": "panellist",
+    "traveled": "travelled",
+    "canceled": "cancelled"
+  }
+}

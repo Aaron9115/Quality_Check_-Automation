@@ -1,0 +1,481 @@
+/* ========================================
+   PDF UPLOADER - Minimal Clean Design
+   ======================================== */
+
+.pdf-uploader {
+  width: 100%;
+  max-width: 100%;
+}
+
+/* ========== DROP ZONE ========== */
+.drop-zone {
+  border: 2px dashed #edebe8;
+  border-radius: 16px;
+  padding: 48px 24px;
+  text-align: center;
+  transition: all 0.2s ease;
+  background: #faf8f6;
+  cursor: pointer;
+  position: relative;
+  min-height: 160px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.drop-zone:hover {
+  border-color: #b8a89a;
+  background: #f5f0eb;
+}
+
+.drop-zone.has-file {
+  border-color: #2d2a24;
+  background: #f5f0eb;
+}
+
+.drop-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  color: #7a6e62;
+}
+
+.drop-icon {
+  color: #b8a89a;
+}
+
+.drop-sub {
+  font-size: 0.8rem;
+  color: #b8a89a;
+}
+
+.file-input {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+/* ========== FILE INFO ========== */
+.file-info {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+  padding: 4px 0;
+}
+
+.file-icon {
+  flex-shrink: 0;
+  color: #7a6e62;
+}
+
+.file-name {
+  font-weight: 500;
+  color: #2d2a24;
+  font-size: 0.95rem;
+}
+
+.file-size {
+  font-size: 0.7rem;
+  color: #b8a89a;
+}
+
+.remove-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px 8px;
+  margin-left: auto;
+  color: #b8a89a;
+  transition: color 0.2s;
+}
+
+.remove-btn:hover {
+  color: #dc2626;
+}
+
+/* ========== UPLOAD BUTTON ========== */
+.upload-btn {
+  margin-top: 16px;
+  padding: 12px 32px;
+  background: #2d2a24;
+  color: #f5f0eb;
+  border: none;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  width: 100%;
+}
+
+.upload-btn:hover:not(:disabled) {
+  background: #1a1a1a;
+  transform: translateY(-1px);
+}
+
+.upload-btn:disabled {
+  background: #edebe8;
+  color: #b8a89a;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* ========== ERROR ========== */
+.error-msg {
+  margin-top: 12px;
+  padding: 10px 16px;
+  background: #fef2f2;
+  color: #dc2626;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  border: 1px solid #fecaca;
+}
+
+/* ========== LOADING ========== */
+.loading-state {
+  margin-top: 16px;
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #faf8f6;
+  border-radius: 10px;
+}
+
+.loader {
+  width: 24px;
+  height: 24px;
+  border: 2px solid #edebe8;
+  border-top-color: #2d2a24;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  flex-shrink: 0;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.loading-state span {
+  font-size: 0.85rem;
+  color: #7a6e62;
+}
+
+/* ========== RESULTS ========== */
+.results-container {
+  margin-top: 24px;
+  padding: 24px;
+  background: #ffffff;
+  border-radius: 16px;
+  border: 1px solid #edebe8;
+}
+
+.results-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.results-header h3 {
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: #2d2a24;
+  margin: 0;
+}
+
+/* ========== COPY BUTTONS ========== */
+.copy-btn {
+  padding: 4px 12px;
+  background: transparent;
+  border: 1px solid #edebe8;
+  border-radius: 6px;
+  font-size: 0.7rem;
+  font-weight: 500;
+  color: #7a6e62;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.copy-btn:hover {
+  background: #f5f0eb;
+  border-color: #b8a89a;
+}
+
+.copy-mini {
+  padding: 2px 8px;
+  background: #edebe8;
+  color: #2d2a24;
+  border: none;
+  border-radius: 4px;
+  font-size: 0.55rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+  flex-shrink: 0;
+  margin-left: auto;
+}
+
+.copy-mini:hover {
+  background: #d5d0c8;
+}
+
+/* ========== STATS ========== */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.stat-card {
+  text-align: center;
+  padding: 12px;
+  background: #faf8f6;
+  border-radius: 10px;
+}
+
+.stat-number {
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: #2d2a24;
+}
+
+.stat-label {
+  font-size: 0.65rem;
+  color: #7a6e62;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-top: 2px;
+}
+
+/* ========== NO ISSUES ========== */
+.no-issues {
+  text-align: center;
+  padding: 24px;
+  background: #f8faf8;
+  border-radius: 10px;
+  margin-bottom: 20px;
+}
+
+.no-issues svg {
+  color: #16a34a;
+  margin-bottom: 4px;
+}
+
+.no-issues p {
+  margin: 0;
+  color: #7a6e62;
+  font-size: 0.9rem;
+}
+
+/* ========== SECTIONS ========== */
+.section {
+  margin-bottom: 20px;
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #edebe8;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+
+.section-header svg {
+  color: #b8a89a;
+  flex-shrink: 0;
+}
+
+.section-header span {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #2d2a24;
+}
+
+.badge {
+  padding: 2px 10px;
+  border-radius: 20px;
+  font-size: 0.6rem;
+  font-weight: 500;
+}
+
+.badge.warn {
+  background: #fef3c7;
+  color: #d97706;
+}
+
+.section-body {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* ========== TOC ROWS ========== */
+.toc-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 12px;
+  background: #faf8f6;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  flex-wrap: wrap;
+}
+
+.toc-row.valid {
+  border-left: 3px solid #16a34a;
+}
+
+.toc-row.invalid {
+  border-left: 3px solid #dc2626;
+}
+
+.toc-title {
+  flex: 1;
+  color: #2d2a24;
+  font-weight: 450;
+}
+
+.toc-pages {
+  font-size: 0.75rem;
+}
+
+.match {
+  color: #16a34a;
+}
+
+.mismatch {
+  color: #dc2626;
+}
+
+/* ========== PAGE BLOCKS ========== */
+.page-block {
+  background: #faf8f6;
+  border-radius: 10px;
+  padding: 12px 16px;
+  margin-bottom: 8px;
+}
+
+.page-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #edebe8;
+  margin-bottom: 8px;
+}
+
+.page-num {
+  font-weight: 500;
+  color: #2d2a24;
+  font-size: 0.85rem;
+}
+
+.page-count {
+  font-size: 0.65rem;
+  color: #b8a89a;
+}
+
+.page-issues {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+/* ========== ISSUE ROWS ========== */
+.issue-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 10px;
+  background: #ffffff;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.issue-row.spelling {
+  border-left: 3px solid #3b82f6;
+}
+
+.issue-row.grammar {
+  border-left: 3px solid #f59e0b;
+}
+
+.issue-row.logic {
+  border-left: 3px solid #ef4444;
+}
+
+.issue-text {
+  color: #2d2a24;
+  flex: 1;
+  min-width: 120px;
+}
+
+.issue-reason {
+  color: #7a6e62;
+  font-size: 0.7rem;
+}
+
+.issue-change {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.old {
+  background: rgba(220, 38, 38, 0.06);
+  color: #dc2626;
+  padding: 1px 8px;
+  border-radius: 12px;
+  font-family: monospace;
+  font-size: 0.7rem;
+}
+
+.new {
+  background: rgba(22, 163, 74, 0.06);
+  color: #16a34a;
+  padding: 1px 8px;
+  border-radius: 12px;
+  font-family: monospace;
+  font-size: 0.7rem;
+}
+
+.arrow {
+  color: #b8a89a;
+  font-size: 0.6rem;
+}
+
+/* ========== RESPONSIVE ========== */
+@media (max-width: 768px) {
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .toc-row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .issue-row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .copy-mini {
+    margin-left: 0;
+  }
+  
+  .results-container {
+    padding: 16px;
+  }
+}

@@ -1,0 +1,43 @@
+.coherence-score {
+  margin-top: 20px;
+  padding: 16px;
+  background: #f8f8f8;
+  border-radius: 8px;
+}
+
+.coherence-score h4 {
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin-bottom: 12px;
+  color: #333;
+}
+
+.score-bar {
+  background: #e0e0e0;
+  height: 6px;
+  border-radius: 3px;
+  margin-bottom: 8px;
+  overflow: hidden;
+}
+
+.score-fill {
+  background: #111;
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.3s ease;
+}
+
+.score-value {
+  font-size: 0.85rem;
+  color: #666;
+}
+
+.coherence-warnings {
+  margin-top: 12px;
+}
+
+.warning {
+  font-size: 0.8rem;
+  color: #c97e00;
+  margin-top: 6px;
+}

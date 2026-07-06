@@ -1,0 +1,53 @@
+.text-editor-wrapper {
+  width: 100%;
+}
+
+.editor-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 14px;
+  padding: 0 4px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: #7a6e62;
+}
+
+.editor-header svg {
+  color: #b8a89a;
+}
+
+.text-editor {
+  width: 100%;
+  padding: 20px 24px;
+  font-size: 0.95rem;
+  font-family: 'SF Mono', 'Monaco', 'Cascadia Code', monospace;
+  line-height: 1.8;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(10px);
+  color: #2d2a24;
+  resize: vertical;
+  transition: all 0.3s ease;
+  min-height: 220px;
+}
+
+.text-editor:focus {
+  outline: none;
+  border-color: #b8a89a;
+  background: rgba(255, 255, 255, 0.5);
+  box-shadow: 0 0 0 4px rgba(45, 42, 36, 0.02);
+}
+
+.text-editor:disabled {
+  background: rgba(255, 255, 255, 0.15);
+  color: #b8a89a;
+  cursor: not-allowed;
+}
+
+.text-editor::placeholder {
+  color: #b8a89a;
+  font-family: inherit;
+  font-size: 0.9rem;
+}

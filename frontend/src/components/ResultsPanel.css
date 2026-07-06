@@ -1,0 +1,375 @@
+/* ========================================
+   RESULTS PANEL - Minimal Clean Design
+   ======================================== */
+
+.results-panel {
+  margin-top: 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* ========== CARD ========== */
+.result-card {
+  background: #ffffff;
+  border-radius: 16px;
+  border: 1px solid #edebe8;
+  overflow: hidden;
+  transition: box-shadow 0.2s ease;
+}
+
+.result-card:hover {
+  box-shadow: 0 4px 20px rgba(45, 42, 36, 0.04);
+}
+
+/* ========== CARD HEADER ========== */
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 20px;
+  background: #faf8f6;
+  border-bottom: 1px solid #edebe8;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #2d2a24;
+}
+
+.header-icon {
+  font-size: 0.8rem;
+  color: #b8a89a;
+}
+
+/* ========== CARD BODY ========== */
+.card-body {
+  padding: 16px 20px;
+}
+
+/* ========== CORRECTED BODY ========== */
+.corrected-body {
+  font-size: 0.9rem;
+  line-height: 1.7;
+  color: #2d2a24;
+  font-family: 'SF Mono', monospace;
+  background: #faf8f6;
+  max-height: 280px;
+  overflow-y: auto;
+  white-space: pre-wrap;
+  word-break: break-word;
+  padding: 20px;
+}
+
+/* ========== NO ISSUES ========== */
+.no-issues {
+  background: #f8faf8;
+  border-color: #e0e8e0;
+}
+
+.no-issues-body {
+  text-align: center;
+  padding: 24px 20px;
+}
+
+.no-issues-body p {
+  font-size: 0.9rem;
+  color: #7a6e62;
+  margin: 0;
+}
+
+/* ========== COPY BUTTONS ========== */
+.copy-btn {
+  padding: 4px 12px;
+  background: transparent;
+  border: 1px solid #edebe8;
+  border-radius: 6px;
+  font-size: 0.7rem;
+  font-weight: 500;
+  color: #7a6e62;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.copy-btn:hover {
+  background: #f5f0eb;
+  border-color: #b8a89a;
+}
+
+.copy-btn-small {
+  padding: 3px 10px;
+  background: #2d2a24;
+  color: #f5f0eb;
+  border: none;
+  border-radius: 4px;
+  font-size: 0.6rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+  min-width: 44px;
+}
+
+.copy-btn-small:hover {
+  background: #1a1a1a;
+}
+
+.copy-btn-mini {
+  padding: 2px 8px;
+  background: #edebe8;
+  color: #2d2a24;
+  border: none;
+  border-radius: 3px;
+  font-size: 0.55rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+  flex-shrink: 0;
+}
+
+.copy-btn-mini:hover {
+  background: #d5d0c8;
+}
+
+/* ========== ISSUE ITEMS ========== */
+.issue-item {
+  padding: 12px 0;
+  border-bottom: 1px solid #f0eeeb;
+}
+
+.issue-item:last-child {
+  border-bottom: none;
+}
+
+.issue-change {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 6px;
+}
+
+.original {
+  background: rgba(220, 38, 38, 0.06);
+  color: #dc2626;
+  padding: 2px 10px;
+  border-radius: 16px;
+  font-family: monospace;
+  font-size: 0.8rem;
+}
+
+.arrow {
+  color: #b8a89a;
+  font-size: 0.7rem;
+}
+
+.corrected {
+  background: rgba(22, 163, 74, 0.06);
+  color: #16a34a;
+  padding: 2px 10px;
+  border-radius: 16px;
+  font-family: monospace;
+  font-size: 0.8rem;
+}
+
+.issue-message {
+  font-size: 0.75rem;
+  color: #7a6e62;
+  margin-bottom: 4px;
+}
+
+/* ========== LOGIC ISSUES ========== */
+.logic-item {
+  padding: 14px 0;
+  border-bottom: 1px solid #f0eeeb;
+}
+
+.logic-item:last-child {
+  border-bottom: none;
+}
+
+.logic-sentence {
+  font-size: 0.85rem;
+  color: #2d2a24;
+  font-style: italic;
+  margin-bottom: 6px;
+}
+
+.logic-reason {
+  font-size: 0.75rem;
+  color: #7a6e62;
+  margin-bottom: 10px;
+}
+
+.logic-suggestions {
+  padding-left: 4px;
+}
+
+.suggestions-label {
+  font-size: 0.7rem;
+  font-weight: 500;
+  color: #7a6e62;
+  margin-bottom: 6px;
+}
+
+.logic-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 0;
+  font-size: 0.75rem;
+  color: #2d2a24;
+  flex-wrap: wrap;
+}
+
+.logic-bullet {
+  color: #b8a89a;
+  font-size: 0.6rem;
+}
+
+.logic-text {
+  flex: 1;
+  min-width: 180px;
+}
+
+/* ========== COHERENCE ========== */
+.score-tag {
+  padding: 2px 12px;
+  border-radius: 20px;
+  font-size: 0.7rem;
+  font-weight: 500;
+}
+
+.score-tag.low {
+  background: rgba(220, 38, 38, 0.06);
+  color: #dc2626;
+}
+
+.score-tag.medium {
+  background: rgba(251, 191, 36, 0.08);
+  color: #d97706;
+}
+
+.score-tag.high {
+  background: rgba(22, 163, 74, 0.06);
+  color: #16a34a;
+}
+
+.score-bar {
+  height: 4px;
+  background: #edebe8;
+  border-radius: 2px;
+  overflow: hidden;
+  margin-bottom: 16px;
+}
+
+.score-fill {
+  height: 100%;
+  background: #b8a89a;
+  border-radius: 2px;
+  transition: width 0.4s ease;
+}
+
+.coherence-tip {
+  padding: 12px 14px;
+  background: #faf8f6;
+  border-radius: 8px;
+  margin-bottom: 16px;
+}
+
+.tip-label {
+  font-size: 0.65rem;
+  font-weight: 600;
+  color: #7a6e62;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 4px;
+}
+
+.tip-text {
+  font-size: 0.8rem;
+  color: #2d2a24;
+}
+
+.coherence-warnings {
+  margin-top: 4px;
+}
+
+.warnings-label {
+  font-size: 0.7rem;
+  font-weight: 500;
+  color: #7a6e62;
+  margin-bottom: 8px;
+}
+
+.warning-item {
+  padding: 10px 12px;
+  background: #faf8f6;
+  border-radius: 8px;
+  margin-bottom: 8px;
+}
+
+.warning-item:last-child {
+  margin-bottom: 0;
+}
+
+.warning-text {
+  font-size: 0.75rem;
+  color: #7a6e62;
+  margin-bottom: 6px;
+}
+
+.warning-suggestion {
+  padding-top: 6px;
+  border-top: 1px solid #edebe8;
+}
+
+.ws-sentence {
+  font-size: 0.7rem;
+  color: #2d2a24;
+  font-style: italic;
+  margin-bottom: 3px;
+}
+
+.ws-fix {
+  font-size: 0.7rem;
+  color: #16a34a;
+  margin-top: 4px;
+  font-family: monospace;
+}
+
+/* ========== SCROLLBAR ========== */
+.corrected-body::-webkit-scrollbar {
+  width: 4px;
+}
+
+.corrected-body::-webkit-scrollbar-track {
+  background: #edebe8;
+  border-radius: 2px;
+}
+
+.corrected-body::-webkit-scrollbar-thumb {
+  background: #b8a89a;
+  border-radius: 2px;
+}
+
+/* ========== RESPONSIVE ========== */
+@media (max-width: 768px) {
+  .card-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .issue-change {
+    flex-wrap: wrap;
+  }
+  
+  .logic-option {
+    flex-wrap: wrap;
+  }
+}

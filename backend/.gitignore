@@ -1,0 +1,23 @@
+@"
+*.exe
+*.msi
+*.dmg
+*.iso
+*.zip
+*.tar.gz
+*.7z
+*.rar
+OllamaSetup.exe
+__pycache__/
+*.pyc
+venv/
+.venv/
+env/
+.env
+temp_uploads/
+*.log
+*.db
+.vscode/
+.idea/
+.DS_Store
+"@ | Out-File -FilePath .gitignore -Encoding utf8
