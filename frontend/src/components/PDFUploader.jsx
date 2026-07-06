@@ -99,22 +99,29 @@ function PDFUploader({ results, loading, error, onUpload }) {
     return count
   }
 
-  const getSuggestion = (issue, type, pageNum) => {
+  // ========== EMAIL-FRIENDLY COPY MESSAGES FOR PDF ==========
+  
+  const getSuggestionMessage = (issue, type, pageNum) => {
     if (type === 'spelling') {
-      return `[Spelling] Page ${pageNum}: Change "${issue.original}" to "${issue.suggestion}"`
+      return `Could you please change "${issue.original}" to "${issue.suggestion}" for British English consistency? (Page ${pageNum})`
     }
     if (type === 'grammar') {
-      return `[Grammar] Page ${pageNum}: "${issue.original}" → "${issue.correction}"`
+      const original = issue.original || ''
+      const correction = issue.correction || ''
+      if (original && correction) {
+        return `Could you please change "${original}" to "${correction}"? (Page ${pageNum})`
+      }
+      return `Please review: ${issue.message} (Page ${pageNum})`
     }
     if (type === 'logic') {
-      return `[Logic] Page ${pageNum}: "${issue.sentence}" - ${issue.reason}`
+      return `Please review this sentence on page ${pageNum}: "${issue.sentence}". ${issue.reason}. Suggested fix: ${issue.suggestion || 'Rewrite for logical consistency'}.`
     }
-    return `[Review] Page ${pageNum}`
+    return `Please review this section on page ${pageNum}`
   }
 
   const getTOCMessage = (entry) => {
     if (entry.is_valid) return ''
-    return `[TOC] "${entry.title.trim()}" listed on page ${entry.listed_page} → should be ${entry.actual_page}`
+    return `[TOC Mismatch] "${entry.title.trim()}" is listed on page ${entry.listed_page} but actually starts on page ${entry.actual_page}. Please update the TOC page number to ${entry.actual_page}.`
   }
 
   return (
@@ -275,7 +282,7 @@ function PDFUploader({ results, loading, error, onUpload }) {
                     <div className="page-issues">
                       {/* Spelling */}
                       {page.british_spelling.map((issue, idx) => {
-                        const msg = getSuggestion(issue, 'spelling', page.page_number)
+                        const msg = getSuggestionMessage(issue, 'spelling', page.page_number)
                         return (
                           <div key={`spell-${idx}`} className="issue-row spelling">
                             <span className="issue-change">
@@ -291,7 +298,7 @@ function PDFUploader({ results, loading, error, onUpload }) {
                       })}
                       {/* Grammar */}
                       {page.grammar_issues.map((issue, idx) => {
-                        const msg = getSuggestion(issue, 'grammar', page.page_number)
+                        const msg = getSuggestionMessage(issue, 'grammar', page.page_number)
                         return (
                           <div key={`gram-${idx}`} className="issue-row grammar">
                             <span className="issue-text">{issue.message}</span>
@@ -310,7 +317,7 @@ function PDFUploader({ results, loading, error, onUpload }) {
                       })}
                       {/* Logic */}
                       {page.logic_issues.map((issue, idx) => {
-                        const msg = getSuggestion(issue, 'logic', page.page_number)
+                        const msg = getSuggestionMessage(issue, 'logic', page.page_number)
                         return (
                           <div key={`log-${idx}`} className="issue-row logic">
                             <span className="issue-text">"{issue.sentence}"</span>
