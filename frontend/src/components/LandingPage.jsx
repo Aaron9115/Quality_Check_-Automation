@@ -275,7 +275,7 @@ function LandingPage({ onNavigate }) {
                 <path d="M4 17H14" stroke="currentColor" strokeWidth="1.5"/>
               </svg>
             </div>
-            <h3>Text Check</h3>
+            <h3>Text QC</h3>
             <p>Grammar, spelling, and logic analysis with British English standards.</p>
             <span className="feature-arrow">→</span>
             <div className="feature-hover-glow"></div>
@@ -295,7 +295,7 @@ function LandingPage({ onNavigate }) {
                 <path d="M21 15L16 10L5 21" stroke="currentColor" strokeWidth="1.5"/>
               </svg>
             </div>
-            <h3>Image Alignment</h3>
+            <h3>Image QC</h3>
             <p>Detect logo overlaps and alignment issues in visual assets.</p>
             <span className="feature-arrow">→</span>
             <div className="feature-hover-glow"></div>

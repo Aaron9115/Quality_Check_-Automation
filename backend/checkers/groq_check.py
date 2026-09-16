@@ -16,9 +16,11 @@ class GroqChecker:
             return
         
         self.client = Groq(api_key=api_key)
-        self.model = "llama-3.3-70b-versatile"
+        # UPDATED: llama-3.3-70b-versatile was decommissioned on Aug 16, 2026
+        # Using new recommended model
+        self.model = "openai/gpt-oss-120b"
         self.available = True
-        print("Groq initialized!")
+        print(f"Groq initialized with model: {self.model}")
     
     def clean_punctuation(self, text: str) -> str:
         """Clean up double punctuation and spacing issues"""

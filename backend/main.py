@@ -13,6 +13,7 @@ load_dotenv()
 from checkers.british_spelling import BritishSpellingChecker
 from checkers.groq_check import GroqChecker
 from checkers.pdf_checker import PDFChecker
+from checkers.ocr_extractor import OCRExtractor
 
 main = FastAPI(title="British English Checker API", version="1.0.0")
 
@@ -90,7 +91,6 @@ async def check_text(request: TextCheckRequest):
         print("Groq not available - check your API key")
     
     # ========== SHOW ALL GRAMMAR ISSUES (NO FILTERING) ==========
-    # Show ALL grammar issues from Groq (don't filter out fixed ones)
     filtered_grammar_issues = grammar_issues
     print(f"Showing all {len(filtered_grammar_issues)} grammar issues")
     
@@ -112,6 +112,117 @@ async def check_text(request: TextCheckRequest):
         "logic_issues": logic_issues[:10],
         "coherence": coherence_result
     }
+
+# ========== IMAGE TEXT EXTRACTION (OCR) ENDPOINT ==========
+@main.post("/api/extract-text-from-image")
+async def extract_text_from_image(file: UploadFile = File(...)):
+    """Extract text from uploaded image using advanced OCR"""
+    
+    # Validate file type
+    allowed_types = ['image/png', 'image/jpeg', 'image/jpg', 'image/webp', 'image/tiff']
+    if file.content_type not in allowed_types:
+        raise HTTPException(status_code=400, detail="File must be an image (PNG, JPG, JPEG, WEBP, TIFF)")
+    
+    # Save uploaded file
+    temp_dir = "temp_uploads"
+    os.makedirs(temp_dir, exist_ok=True)
+    temp_path = os.path.join(temp_dir, file.filename)
+    
+    try:
+        # Save file
+        with open(temp_path, "wb") as buffer:
+            shutil.copyfileobj(file.file, buffer)
+        
+        # Extract text using OCR
+        extractor = OCRExtractor()
+        result = extractor.extract_text(temp_path)
+        
+        if not result["success"]:
+            return {
+                "success": False,
+                "error": result.get("error", "OCR failed"),
+                "extracted_text": "",
+                "word_count": 0,
+                "char_count": 0
+            }
+        
+        extracted_text = result["cleaned_text"]
+        
+        if not extracted_text:
+            return {
+                "success": True,
+                "extracted_text": "",
+                "word_count": 0,
+                "char_count": 0,
+                "corrected_text": "",
+                "british_spelling": [],
+                "grammar_issues": [],
+                "logic_issues": [],
+                "coherence": {"score": 0.5, "warnings": []},
+                "message": "No text found in the image. Please try a clearer image."
+            }
+        
+        # Run grammar checks on extracted text
+        from checkers.british_spelling import BritishSpellingChecker
+        from checkers.groq_check import GroqChecker
+        
+        british_checker = BritishSpellingChecker()
+        groq_checker = GroqChecker()
+        
+        # British spelling check
+        spelling_issues = british_checker.check(extracted_text)
+        text_with_british = british_checker.apply_corrections(extracted_text, spelling_issues)
+        
+        # Format spelling issues
+        spelling_issues_formatted = []
+        for issue in spelling_issues:
+            spelling_issues_formatted.append({
+                "message": "American spelling",
+                "original": issue['original'],
+                "correction": issue['suggestion'],
+                "context": issue['context']
+            })
+        
+        # Grammar and logic check
+        grammar_issues = []
+        logic_issues = []
+        coherence_result = {"score": 0.5, "warnings": []}
+        final_corrected = text_with_british
+        
+        if groq_checker.available:
+            print("Using Groq API for image text analysis...")
+            groq_result = groq_checker.check_full_text(text_with_british)
+            
+            if groq_result.get("corrected_text"):
+                final_corrected = apply_cleanup(groq_result.get("corrected_text"))
+            
+            grammar_issues = groq_result.get("grammar_issues", [])
+            logic_issues = groq_result.get("logic_issues", [])
+            coherence_result = {
+                "score": groq_result.get("coherence_score", 0.5),
+                "warnings": groq_result.get("coherence_warnings", [])
+            }
+            print(f"Groq found {len(grammar_issues)} grammar issues, {len(logic_issues)} logic issues in image text")
+        
+        return {
+            "success": True,
+            "extracted_text": extracted_text,
+            "word_count": result["word_count"],
+            "char_count": result["char_count"],
+            "corrected_text": final_corrected,
+            "british_spelling": spelling_issues_formatted[:15],
+            "grammar_issues": grammar_issues[:15],
+            "logic_issues": logic_issues[:10],
+            "coherence": coherence_result
+        }
+        
+    except Exception as e:
+        print(f"Image text extraction error: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+    finally:
+        # Clean up temp file
+        if os.path.exists(temp_path):
+            os.remove(temp_path)
 
 @main.post("/api/check-image-alignment")
 async def check_image_alignment(logo: UploadFile = File(...), background: UploadFile = File(...)):
