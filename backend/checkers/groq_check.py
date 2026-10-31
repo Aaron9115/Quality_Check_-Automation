@@ -16,33 +16,21 @@ class GroqChecker:
             return
         
         self.client = Groq(api_key=api_key)
-        # UPDATED: llama-3.3-70b-versatile was decommissioned on Aug 16, 2026
-        # Using new recommended model
         self.model = "openai/gpt-oss-120b"
         self.available = True
         print(f"Groq initialized with model: {self.model}")
     
     def clean_punctuation(self, text: str) -> str:
         """Clean up double punctuation and spacing issues"""
-        # Fix double question marks
         text = text.replace("??", "?")
         text = text.replace("?!", "?")
         text = text.replace("?.", "?")
         text = text.replace("!.", ".")
         text = text.replace("..", ".")
-        
-        # Fix space after punctuation (add space if missing)
         text = re.sub(r'([.!?])([A-Za-z])', r'\1 \2', text)
-        
-        # Fix space before punctuation (remove space if present)
         text = re.sub(r'\s+([.!?])', r'\1', text)
-        
-        # Fix multiple spaces
         text = re.sub(r'\s+', ' ', text)
-        
-        # Fix space after comma
         text = re.sub(r',([A-Za-z])', r', \1', text)
-        
         return text.strip()
     
     def check_full_text(self, text: str) -> Dict:
@@ -71,22 +59,28 @@ CRITICAL RULES - APPLY TO EVERY SENTENCE:
 9. "Why is the sky blue" → "Why is the sky blue?"
 10. "Can you help me" → "Can you help me?"
 
+LOGIC RULES - CRITICAL:
+Detect sentences that are logically impossible or contradictory:
+- "The dead man is breathing" → Dead people cannot breathe
+- "She was born in 2015 and graduated in 2010" → Cannot graduate before birth
+- "The silence was so loud" → Silence is the absence of sound
+- "The colour blue tastes like strawberries" → Colours cannot be tasted
+
 For EACH grammar issue, provide:
 - type: "punctuation" for punctuation errors
 - message: clear description of the error
 - original: the exact wrong text
-- correction: the exact corrected text with BOTH comma AND question mark if needed
+- correction: the exact corrected text
 
 If the text is already correct, return empty arrays for grammar_issues and logic_issues.
 
-Return ONLY valid JSON.
+Return ONLY valid JSON. Do not use markdown code blocks.
 
 {{
     "corrected_text": "the COMPLETE fixed version with ALL question marks and commas added",
     "grammar_issues": [
         {{"type": "punctuation", "message": "Missing comma after greeting and missing question mark", "original": "Hello how are you", "correction": "Hello, how are you?"}},
-        {{"type": "punctuation", "message": "Missing question mark", "original": "What is your name", "correction": "What is your name?"}},
-        {{"type": "punctuation", "message": "Missing comma after greeting and missing question mark", "original": "Good morning how can I help you", "correction": "Good morning, how can I help you?"}}
+        {{"type": "punctuation", "message": "Missing question mark", "original": "What is your name", "correction": "What is your name?"}}
     ],
     "logic_issues": [
         {{"sentence": "The dead man is breathing", "reason": "Dead people cannot breathe", "suggestion": "Change to 'The injured man is breathing'"}},
@@ -99,7 +93,6 @@ Return ONLY valid JSON.
 IMPORTANT RULES:
 - If the text is ALREADY CORRECT, return empty arrays: "grammar_issues": [], "logic_issues": []
 - For ANY question, add "?" at the end (ONE question mark only, not two)
-- For greetings like "Good morning how", add comma AFTER the greeting
 - DO NOT add double question marks "??" - only ONE "?"
 - DO NOT suggest changes that are already applied
 - The corrected_text MUST include ALL fixes
@@ -109,15 +102,31 @@ IMPORTANT RULES:
             response = self.client.chat.completions.create(
                 model=self.model,
                 messages=[
-                    {"role": "system", "content": "You are a British English grammar expert. For ANY sentence that is a question, you MUST add ONE '?' at the end (not two). If the text is already correct, return empty arrays. Never suggest changes that are already applied."},
+                    {"role": "system", "content": "You are a British English grammar expert. Return only valid JSON without markdown formatting."},
                     {"role": "user", "content": prompt}
                 ],
                 temperature=0.1,
-                max_tokens=2000,
-                response_format={"type": "json_object"}
+                max_tokens=4000
+                # REMOVED response_format={"type": "json_object"} to fix the 400 error
             )
             
             result_text = response.choices[0].message.content
+            
+            # Clean up potential markdown formatting
+            result_text = result_text.strip()
+            if result_text.startswith("```json"):
+                result_text = result_text[7:]
+            if result_text.startswith("```"):
+                result_text = result_text[3:]
+            if result_text.endswith("```"):
+                result_text = result_text[:-3]
+            result_text = result_text.strip()
+            
+            # Extract JSON object safely
+            json_match = re.search(r'\{.*\}', result_text, re.DOTALL)
+            if json_match:
+                result_text = json_match.group(0)
+
             result = json.loads(result_text)
             
             # Clean up punctuation in corrected_text
