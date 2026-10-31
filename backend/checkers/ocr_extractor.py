@@ -82,7 +82,7 @@ Extract the text now:"""
                 ],
                 temperature=0.1,
                 max_tokens=2000,
-                reasoning_effort="none"
+                extra_body={"reasoning_effort": "none"}
             )
             
             extracted_text = response.choices[0].message.content.strip()
