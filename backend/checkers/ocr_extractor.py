@@ -19,7 +19,7 @@ class OCRExtractor:
         
         self.client = Groq(api_key=api_key)
         # FIXED: Using the correct Groq Vision model
-        self.model = "qwen/qwen3.6-27b"
+        self.model = "qwen/qwen3.8-27b"
         self.available = True
         print(f"Groq Vision initialized with model: {self.model}")
     
@@ -81,7 +81,8 @@ Extract the text now:"""
                     }
                 ],
                 temperature=0.1,
-                max_tokens=2000
+                max_tokens=2000,
+                reasoning_effort="none"
             )
             
             extracted_text = response.choices[0].message.content.strip()
