@@ -18,7 +18,8 @@ class OCRExtractor:
             return
         
         self.client = Groq(api_key=api_key)
-        self.model = "qwen/qwen3.8-27b"
+        # FIXED: Using the correct Groq Vision model
+        self.model = "qwen/qwen3.6-27b"
         self.available = True
         print(f"Groq Vision initialized with model: {self.model}")
     
