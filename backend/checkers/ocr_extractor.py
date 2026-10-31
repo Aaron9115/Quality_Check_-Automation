@@ -49,7 +49,6 @@ class OCRExtractor:
         try:
             base64_image = self.encode_image(image_path)
             
-            # UPDATED PROMPT: Prevents duplicate text and handles complex layouts
             prompt = """You are an expert OCR system reading a graphic design file, brochure, poster, or branding material.
 
 Extract ALL visible text from this image accurately.
@@ -81,8 +80,7 @@ Extract the text now:"""
                     }
                 ],
                 temperature=0.1,
-                max_tokens=2000,
-                reasoning_effort="none"
+                max_tokens=2000
             )
             
             extracted_text = response.choices[0].message.content.strip()
