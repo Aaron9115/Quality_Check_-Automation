@@ -338,7 +338,7 @@ function LandingPage({ onNavigate }) {
             animate={{ opacity: 1 }}
             transition={{ delay: 0.9 }}
           >
-            © 2026
+            © A2026
           </motion.p>
         </div>
       </footer>
